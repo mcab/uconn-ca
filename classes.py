@@ -92,11 +92,11 @@ def printClasses(c, viewCA=True):
         for row in classes[1:]:
             if not 'N/A' in row[17]:
                 print '%-5s %-4s %-7s %-4s %-7s %-30s %-11s %4s/%8s/%3s/%4s %-76s %s' % (row[0], row[1], row[2], \
-                    row[17], row[3], row[7], row[9], row[13], row[11], row[10], row[14], row[15].replace('\n', ''), row[16])
+                    row[17], row[3], row[7], row[9], row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
     else:
         for row in classes[1:]:
             print '%-5s %-4s %-7s %-4s %-7s %-30s %-11s %4s/%8s/%3s/%4s %-76s %s' % (row[0], row[1], row[2], \
-                row[17], row[3], row[7], row[9], row[13], row[11], row[10], row[14], row[15].replace('\n', ''), row[16])
+                row[17], row[3], row[7], row[9], row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
 
 def processContentArea(ca, d):
     """
