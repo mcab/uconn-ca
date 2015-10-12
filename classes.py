@@ -1,4 +1,5 @@
 """
+2015-10-11: v0.2, adds support for specific content areas.
 2015-10-08: v0.1, initial release.
 
 This code takes in a downloaded class schedule from UCONN's Student Administration System,
@@ -75,28 +76,43 @@ def formatCatalogNumber(c):
         row[2] = row[2][2:len(row[2]) - 1]
     return classes
 
-def printClasses(c, viewCA=True):
+def printClasses(c, ca = 0):
     """
     This function takes in two arguments:
              c: class listings, as a list
-        viewCA: (default true) view only content area courses, as a boolean
+            ca: views classes based off of integer,
+                0 = show all classes
+                1 = show Arts and Humanities
+                2 = show Social Sciences
+                3 = show Science and Technology
+                4 = show Diversity and Multiculturalism
+                5 = show all classes with a content area
 
-    This prints out the classes in the class listing. If viewCA is True,
-    it only prints out those classes found with a content area. If it is
-    false, it prints out the class listing.
+    This prints out the classes in the class listing. If viewCA is True, it only prints
+    out those classes found with a content area. By default, this will print out every
+    content area. If ca is specified, then it will print out only those classes in a 
+    a certain content area. If it is false, it prints out the class listing.
     """
     classes = c
-    print '%s %s %s %-4s %s %-30s %-11s %s %-76s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', 'Description', \
-        'Auto-Enroll', 'Open/Enrolled/Max/Wait', 'Instructor', 'Hours')
-    if viewCA == True:
+    formattedString = '%-5s %-4s %-7s %-4s %-7s %-30s %-11s %4s/%8s/%3s/%4s %-76s %s'
+
+    print '%s %s %s %-4s %s %-30s %-11s %s %-76s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', \
+        'Description', 'Auto-Enroll', 'Open/Enrolled/Max/Wait', 'Instructor', 'Hours')
+    if ca == 0:                                                                                             # Show all classes.
         for row in classes[1:]:
-            if not 'N/A' in row[17]:
-                print '%-5s %-4s %-7s %-4s %-7s %-30s %-11s %4s/%8s/%3s/%4s %-76s %s' % (row[0], row[1], row[2], \
-                    row[17], row[3], row[7], row[9], row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
+            print formattedString % (row[0], row[1], row[2], row[17], row[3], row[7], row[9], \
+                row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
     else:
-        for row in classes[1:]:
-            print '%-5s %-4s %-7s %-4s %-7s %-30s %-11s %4s/%8s/%3s/%4s %-76s %s' % (row[0], row[1], row[2], \
-                row[17], row[3], row[7], row[9], row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
+        if ca == 5:                                                                                         # Show all classes with a content area.
+            for row in classes[1:]:
+                if not 'N/A' in row[17]:
+                    print formattedString % (row[0], row[1], row[2], row[17], row[3], row[7], row[9], \
+                        row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
+        else:                                                                                               # Show all classes in that content area.
+            for row in classes[1:]:
+                if str(ca) == row[17][0:1]:
+                    print formattedString % (row[0], row[1], row[2], row[17], row[3], row[7], row[9], \
+                        row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
 
 def processContentArea(ca, d):
     """
@@ -115,8 +131,9 @@ def processContentArea(ca, d):
 
 def main():
     parser = argparse.ArgumentParser(description = 'This script determines which classes are in what content areas based off of the Undergraduate Catalog of 2015-2016.')
-    parser.add_argument('-c', '--classes', help = 'Classes file from the Student Administration service', required = True)
-    parser.add_argument('-ca', '--contentarea', help = 'Content area file from the Undergraduate Catalog', required = True)
+    parser.add_argument('-c', '--classes', type = str, help = 'Classes file from the Student Administration service', required = True)
+    parser.add_argument('-ca', '--contentarea', type = str, help = 'Content area file from the Undergraduate Catalog', required = True)
+    parser.add_argument('-s', '--show', type = int, default = 0, help = 'Content area number from the Undergraduate Catalog, 0 shows all classes, 1-4 shows specific content areas, 5 shows all classes with a content area', required = False)
     args = parser.parse_args()
 
     data = parse(args.classes)
@@ -128,7 +145,7 @@ def main():
     classes = formatCatalogNumber(classes)
     contentAreas = processContentArea(args.contentarea, ' ^ ')
     classes = appendContentArea(classes, contentAreas)
-    printClasses(classes, True)
+    printClasses(classes, args.show)
 
 if __name__ == "__main__":
     main()
