@@ -30,7 +30,6 @@ Field 14: People on Wait List   - number
 Field 15: Instructor (Role)     - letters
 Field 16: Hours/Days/Location   - multiple times and days
 Field 17: Content Area          - up to two characters
-
 """
 
 import argparse
