@@ -1,4 +1,5 @@
 """
+2015-11-07: v0.3.1, reformatted fields to modify field 5. 
 2015-11-07: v0.3.0, fixed for new field (field 5, Units)
 2015-11-07: v0.2.1, reformatted top section.
 2015-10-11: v0.2.0, adds support for specific content areas.
@@ -65,17 +66,19 @@ def appendContentArea(c, ca):
             classes[r].append('N/A')
     return classes
 
-def formatCatalogNumber(c):
+def formatFields(c):
     """
     This function takes in one argument:
         c: class listings, as a list
 
     This removes the =" and trailing " in the catalog number
-    in the original .xls file for classes.
+    and units in the original .xls file for classes.
     """
     classes = c
     for row in classes[1:]:
         row[2] = row[2][2:len(row[2]) - 1]
+        if row[5] != None:
+            row[5] = row[5][2:len(row[2]) - 1]
     return classes
 
 def printClasses(c, ca = 0):
@@ -144,7 +147,7 @@ def main():
     for row in rows:
         classes.append([c.text for c in row.getchildren()])
 
-    classes = formatCatalogNumber(classes)
+    classes = formatFields(classes)
     contentAreas = processContentArea(args.contentarea, ' ^ ')
     classes = appendContentArea(classes, contentAreas)
     printClasses(classes, args.show)
