@@ -1,6 +1,7 @@
 """
-2015-10-11: v0.2, adds support for specific content areas.
-2015-10-08: v0.1, initial release.
+2015-11-07: v0.2.1, reformatted top section.
+2015-10-11: v0.2.0, adds support for specific content areas.
+2015-10-08: v0.1.0, initial release.
 
 This code takes in a downloaded class schedule from UCONN's Student Administration System,
 and determines which classes are in what content area as defined in the Undergraduate Catalog.
@@ -12,24 +13,25 @@ This script does not have up to date values, and is meant as a method of quick c
 actual verification. Double check the Undergraduate Catalog and the up-to-date listing on UCONN's
 Student Administration System for availability and space.
 
-Field  0: Class Number          - 5 digits
-Field  1: Subject Area          - 4 letters
-Field  2: Catalog Number        - 5 characters, excluding =" "
-Field  3: Class Section         - 4 characters
-Field  4: Academic Career       - Undergraduate, typically.
-Field  5: Campus                - 5 letters
-Field  6: Session               - Regular?
-Field  7: Description           - 30 characters
-Field  8: Instruction Mode      - In Person/Hybrid/WWW/TV/etc.
-Field  9: Auto Enroll Sections  - 4 characters
-Field 10: Enrollment Capacity   - number
-Field 11: Enrollment Current    - number
-Field 12: Specific Limitations  - text information
-Field 13: Enrollment Slots Open - number
-Field 14: People on Wait List   - number
-Field 15: Instructor (Role)     - letters
-Field 16: Hours/Days/Location   - multiple times and days
-Field 17: Content Area          - up to two characters
+Field  0: Class Number          - Individual classes                - 5 digits
+Field  1: Subject Area          - What subject                      - 4 letters
+Field  2: Catalog Number        - Corresponds to class catalog      - 4/5 alphanumeric
+Field  3: Class Section         - Individual sections               - 3/4 alphanumeric
+Field  4: Academic Career       - Undergraduate, graduate, etc.     - 
+Field  5: Units                 - Amount of credits towards degree  - String, has =" "
+Field  6: Campus                - What campus                       - 5 letters
+Field  7: Session               - When class is held                - letters
+Field  8: Description           - 30 characters
+Field  9: Instruction Mode      - In Person/Hybrid/WWW/TV/etc.
+Field 10: Auto Enroll Sections  - Forced into these secutions       - 4 characters
+Field 11: Enrollment Capacity   - Max amount in section             - Number
+Field 12: Enrollment Current    - Current amount in section         - Number
+Field 13: Specific Limitations  - Specific restrictions on enroll   - String
+Field 14: Enrollment Slots Open - Amount of available slots left    - Number
+Field 15: People on Wait List   - Amount on waitlist                - Number
+Field 16: Instructor (Role)     - (PI), primary instructor, teacher - String
+Field 17: Hours/Days/Location   - Time / Day / Location
+Field 18: Content Area          - Which content area class is       - 2 alphanumeric
 """
 
 import argparse
@@ -112,7 +114,7 @@ def printClasses(c, ca = 0):
                 if str(ca) == row[17][0:1]:
                     print formattedString % (row[0], row[1], row[2], row[17], row[3], row[7], row[9], \
                         row[13], row[11], row[10], row[14], row[15].replace('\n\r', ''), row[16])
-
+    
 def processContentArea(ca, d):
     """
     This function takes in two arguments:
