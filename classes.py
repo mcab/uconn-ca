@@ -1,4 +1,5 @@
 """
+2015-11-09: v0.4.0, see only full classes, reformatted printing.
 2015-11-07: v0.3.1, reformatted fields to modify field 5. 
 2015-11-07: v0.3.0, fixed for new field (field 5, Units)
 2015-11-07: v0.2.1, reformatted top section.
@@ -81,17 +82,20 @@ def formatFields(c):
             row[5] = row[5][2:len(row[2]) - 1]
     return classes
 
-def printClasses(c, ca = 0):
+def printClasses(c, ca = 0, f = 0):
     """
-    This function takes in two arguments:
+    This function takes in three arguments:
              c: class listings, as a list
-            ca: views classes based off of integer,
+            ca: views classes based off of integer.
                 0 = show all classes
                 1 = show Arts and Humanities
                 2 = show Social Sciences
                 3 = show Science and Technology
                 4 = show Diversity and Multiculturalism
                 5 = show all classes with a content area
+             f: views classes if they are full or not.
+                0 = show all classes
+                1 = show full classes only
 
     This prints out the classes in the class listing. If viewCA is True, it only prints
     out those classes found with a content area. By default, this will print out every
@@ -99,25 +103,36 @@ def printClasses(c, ca = 0):
     a certain content area. If it is false, it prints out the class listing.
     """
     classes = c
-    formattedString = '%-5s %-4s %-7s %-4s %-7s %-30s %-11s %4s/%8s/%3s/%4s %-76s %s'
+    formattedString = '%(class)-5s %(subject)-4s %(catalog)-7s %(ca)-4s %(section)-7s %(description)-30s %(autoenroll)-11s %(open)4s/%(enrolled)8s/%(max)3s/%(wait)4s %(instructor)-76s %(hours)s'
 
     print '%s %s %s %-4s %s %-30s %-11s %s %-76s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', \
         'Description', 'Auto-Enroll', 'Open/Enrolled/Max/Wait', 'Instructor', 'Hours')
-    if ca == 0:                                                                                             # Show all classes.
-        for row in classes[1:]:
-            print formattedString % (row[0], row[1], row[2], row[18], row[3], row[8], row[10], \
-                row[14], row[12], row[11], row[15], row[16].replace('\n\r', ''), row[17])
-    else:
-        if ca == 5:                                                                                         # Show all classes with a content area.
-            for row in classes[1:]:
+    
+    for row in classes[1:]:
+        mapping = {"class": row[0], "subject": row[1], "catalog": row[2], "ca": row[18], "section": row[3], 
+                   "description": row[8], "autoenroll": row[10], "open": row[14], "enrolled": row[12],
+                   "max": row[11], "wait": row[15], "instructor": row[16].replace('\n\r', ''), "hours": row[17]}
+        if f == 1:
+            if row[12] == row[11]:
+                if ca == 0:
+                    print formattedString % mapping
+                else:
+                    if not 'N/A' in row[18]:
+                        if ca == 5: 
+                            print formattedString % mapping
+                        else:
+                            if str(ca) == row[18][0:1]:
+                                print formattedString % mapping
+        else:
+            if ca == 0:
+                print formattedString % mapping
+            else:
                 if not 'N/A' in row[18]:
-                    print formattedString % (row[0], row[1], row[2], row[18], row[3], row[8], row[10], \
-                        row[14], row[12], row[11], row[15], row[16].replace('\n\r', ''), row[17])
-        else:                                                                                               # Show all classes in that content area.
-            for row in classes[1:]:
-                if str(ca) == row[18][0:1]:
-                    print formattedString % (row[0], row[1], row[2], row[18], row[3], row[8], row[10], \
-                        row[14], row[12], row[11], row[15], row[16].replace('\n\r', ''), row[17])
+                    if ca == 5:
+                        print formattedString % mapping
+                    else:
+                        if str(ca) == row[18][0:1]:
+                            print formattedString % mapping
 
 def processContentArea(ca, d):
     """
@@ -131,14 +146,16 @@ def processContentArea(ca, d):
     f = open(ca, 'r')
     data = list()
     for line in f.readlines():
-        data.append(line.split(d));
+        data.append(line.split(d))
     return data
 
 def main():
     parser = argparse.ArgumentParser(description = 'This script determines which classes are in what content areas based off of the Undergraduate Catalog of 2015-2016.')
     parser.add_argument('-c', '--classes', type = str, help = 'Classes file from the Student Administration service', required = True)
     parser.add_argument('-ca', '--contentarea', type = str, help = 'Content area file from the Undergraduate Catalog', required = True)
-    parser.add_argument('-s', '--show', type = int, default = 0, help = 'Content area number from the Undergraduate Catalog, 0 shows all classes, 1-4 shows specific content areas, 5 shows all classes with a content area', required = False)
+    parser.add_argument('-s', '--show', type = int, default = 0, help = 'Content area number from the Undergraduate Catalog. 0 shows all classes, 1-4 shows specific content areas, 5 shows all classes with a content area', required = False)
+    parser.add_argument('-f', '--full', type = int, default = 0, help = 'Shows what classes are full. 0 shows all classes, 1 shows full classes only', required = False)
+    
     args = parser.parse_args()
 
     data = parse(args.classes)
@@ -150,7 +167,7 @@ def main():
     classes = formatFields(classes)
     contentAreas = processContentArea(args.contentarea, ' ^ ')
     classes = appendContentArea(classes, contentAreas)
-    printClasses(classes, args.show)
+    printClasses(classes, args.show, args.full)
 
 if __name__ == "__main__":
     main()
