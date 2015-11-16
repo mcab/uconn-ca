@@ -1,4 +1,5 @@
 """
+2015-11-16: v0.4.1, displays units per class.
 2015-11-09: v0.4.0, see only full classes, reformatted printing.
 2015-11-07: v0.3.1, reformatted fields to modify field 5. 
 2015-11-07: v0.3.0, fixed for new field (field 5, Units)
@@ -72,14 +73,17 @@ def formatFields(c):
     This function takes in one argument:
         c: class listings, as a list
 
-    This removes the =" and trailing " in the catalog number
-    and units in the original .xls file for classes.
+    This removes the =" and trailing " in the catalog number.
+    For the units, the =" and trailing " are removed, as well
+    as the additional .00; no observed classes are fractional units.
     """
     classes = c
     for row in classes[1:]:
         row[2] = row[2][2:len(row[2]) - 1]
         if row[5] != None:
-            row[5] = row[5][2:len(row[2]) - 1]
+            row[5] = row[5].replace('.00', '')
+            row[5] = row[5].replace('="', '')
+            row[5] = row[5].replace('"', '')
     return classes
 
 def printClasses(c, ca = 0, f = 0):
@@ -103,14 +107,14 @@ def printClasses(c, ca = 0, f = 0):
     a certain content area. If it is false, it prints out the class listing.
     """
     classes = c
-    formattedString = '%(class)-5s %(subject)-4s %(catalog)-7s %(ca)-4s %(section)-7s %(description)-30s %(autoenroll)-11s %(open)4s/%(enrolled)8s/%(max)3s/%(wait)4s %(instructor)-76s %(hours)s'
+    formattedString = '%(class)-5s %(subject)-4s %(catalog)-7s %(ca)-4s %(section)-7s %(units)-6s %(description)-30s %(autoenroll)-11s %(open)4s/%(enrolled)8s/%(max)3s/%(wait)4s %(instructor)-76s %(hours)s'
 
-    print '%s %s %s %-4s %s %-30s %-11s %s %-76s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', \
+    print '%s %s %s %-4s %-7s %-6s %-30s %-11s %s %-76s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', 'Units', \
         'Description', 'Auto-Enroll', 'Open/Enrolled/Max/Wait', 'Instructor', 'Hours')
     
     for row in classes[1:]:
         mapping = {"class": row[0], "subject": row[1], "catalog": row[2], "ca": row[18], "section": row[3], 
-                   "description": row[8], "autoenroll": row[10], "open": row[14], "enrolled": row[12],
+                   "units": row[5], "description": row[8], "autoenroll": row[10], "open": row[14], "enrolled": row[12],
                    "max": row[11], "wait": row[15], "instructor": row[16].replace('\n\r', ''), "hours": row[17]}
         if f == 1:
             if row[12] == row[11]:
