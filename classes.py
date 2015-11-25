@@ -1,4 +1,5 @@
 """
+2015-11-24: v0.4.2, changed to show only full, excluding full, and all classes.
 2015-11-16: v0.4.1, displays units per class.
 2015-11-09: v0.4.0, see only full classes, reformatted printing.
 2015-11-07: v0.3.1, reformatted fields to modify field 5. 
@@ -113,20 +114,38 @@ def printClasses(c, ca = 0, f = 0):
         'Description', 'Auto-Enroll', 'Open/Enrolled/Max/Wait', 'Instructor', 'Hours')
     
     for row in classes[1:]:
+        # Map the data within the row to certain identifiers.
         mapping = {"class": row[0], "subject": row[1], "catalog": row[2], "ca": row[18], "section": row[3], 
                    "units": row[5], "description": row[8], "autoenroll": row[10], "open": row[14], "enrolled": row[12],
                    "max": row[11], "wait": row[15], "instructor": row[16].replace('\n\r', ''), "hours": row[17]}
-        if f == 1:
-            if row[12] == row[11]:
-                if ca == 0:
-                    print formattedString % mapping
-                else:
-                    if not 'N/A' in row[18]:
-                        if ca == 5: 
-                            print formattedString % mapping
-                        else:
-                            if str(ca) == row[18][0:1]:
+        # Show either only full classes or excluding full classes.
+        if f != 0:
+            # Show only full classes.
+            if f == 1:
+                if row[12] == row[11]:
+                    if ca == 0:
+                        print formattedString % mapping
+                    else:
+                        if not 'N/A' in row[18]:
+                            if ca == 5: 
                                 print formattedString % mapping
+                            else:
+                                if str(ca) == row[18][0:1]:
+                                    print formattedString % mapping
+            # Exclude full classes.
+            elif f == 2:
+                # Thus only print out if open is greater than 0.
+                if row[14] > '0':
+                    if ca == 0:
+                        print formattedString % mapping
+                    else:
+                        if not 'N/A' in row[18]:
+                            if ca == 5: 
+                                print formattedString % mapping
+                            else:
+                                if str(ca) == row[18][0:1]:
+                                    print formattedString % mapping
+        # Show all classes, regardless.
         else:
             if ca == 0:
                 print formattedString % mapping
@@ -155,10 +174,10 @@ def processContentArea(ca, d):
 
 def main():
     parser = argparse.ArgumentParser(description = 'This script determines which classes are in what content areas based off of the Undergraduate Catalog of 2015-2016.')
-    parser.add_argument('-c', '--classes', type = str, help = 'Classes file from the Student Administration service', required = True)
-    parser.add_argument('-ca', '--contentarea', type = str, help = 'Content area file from the Undergraduate Catalog', required = True)
-    parser.add_argument('-s', '--show', type = int, default = 0, help = 'Content area number from the Undergraduate Catalog. 0 shows all classes, 1-4 shows specific content areas, 5 shows all classes with a content area', required = False)
-    parser.add_argument('-f', '--full', type = int, default = 0, help = 'Shows what classes are full. 0 shows all classes, 1 shows full classes only', required = False)
+    parser.add_argument('-c', '--classes', type = str, help = 'Classes file from the Student Administration service.', required = True)
+    parser.add_argument('-ca', '--contentarea', type = str, help = 'Content area file from the Undergraduate Catalog.', required = True)
+    parser.add_argument('-s', '--show', type = int, default = 0, help = 'Content area number from the Undergraduate Catalog. 0 shows all classes, 1-4 shows specific content areas, 5 shows all classes with a content area.', required = False)
+    parser.add_argument('-f', '--full', type = int, default = 0, help = 'Shows what classes are full. 0 shows all classes, 1 shows only full classes, 2 excludes full classes.', required = False)
     
     args = parser.parse_args()
 
