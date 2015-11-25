@@ -1,9 +1,10 @@
 """
+2015-11-24: v0.4.3, rudimentary error handling implemented.
 2015-11-24: v0.4.2, changed to show only full, excluding full, and all classes.
 2015-11-16: v0.4.1, displays units per class.
 2015-11-09: v0.4.0, see only full classes, reformatted printing.
 2015-11-07: v0.3.1, reformatted fields to modify field 5. 
-2015-11-07: v0.3.0, fixed for new field (field 5, Units)
+2015-11-07: v0.3.0, fixed for new field (field 5, Units).
 2015-11-07: v0.2.1, reformatted top section.
 2015-10-11: v0.2.0, adds support for specific content areas.
 2015-10-08: v0.1.0, initial release.
@@ -172,6 +173,21 @@ def processContentArea(ca, d):
         data.append(line.split(d))
     return data
 
+def validateArgs(a):
+    """
+    This function takes in one argument:
+        a: arguments passed by the user
+
+    This function determines if the values entered for:
+        --show
+        --full
+    are valid. Raises an exception if not.
+    """
+    if not (0 <= a.show <= 5):
+        raise Exception('Invalid number put in for show (0-5): ' + str(a.show))
+    elif not (0 <= a.full <= 2):
+        raise Exception('Invalid number put in for full (0-2): ' + str(a.full))
+
 def main():
     parser = argparse.ArgumentParser(description = 'This script determines which classes are in what content areas based off of the Undergraduate Catalog of 2015-2016.')
     parser.add_argument('-c', '--classes', type = str, help = 'Classes file from the Student Administration service.', required = True)
@@ -180,17 +196,21 @@ def main():
     parser.add_argument('-f', '--full', type = int, default = 0, help = 'Shows what classes are full. 0 shows all classes, 1 shows only full classes, 2 excludes full classes.', required = False)
     
     args = parser.parse_args()
+    validateArgs(args)
 
-    data = parse(args.classes)
-    rows = data.xpath("body/table")[0].findall("tr")
-    classes = list()
-    for row in rows:
-        classes.append([c.text for c in row.getchildren()])
-
-    classes = formatFields(classes)
-    contentAreas = processContentArea(args.contentarea, ' ^ ')
-    classes = appendContentArea(classes, contentAreas)
-    printClasses(classes, args.show, args.full)
+    try:
+        data = parse(args.classes)
+        rows = data.xpath("body/table")[0].findall("tr")
+        classes = list()
+        for row in rows:
+            classes.append([c.text for c in row.getchildren()])
+    
+        classes = formatFields(classes)
+        contentAreas = processContentArea(args.contentarea, ' ^ ')
+        classes = appendContentArea(classes, contentAreas)
+        printClasses(classes, args.show, args.full)
+    except IOError, Argument:
+        print 'The file(s) entered cannot be accessed:', Argument
 
 if __name__ == "__main__":
     main()
