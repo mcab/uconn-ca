@@ -1,14 +1,4 @@
 """
-2015-11-24: v0.4.3, rudimentary error handling implemented.
-2015-11-24: v0.4.2, changed to show only full, excluding full, and all classes.
-2015-11-16: v0.4.1, displays units per class.
-2015-11-09: v0.4.0, see only full classes, reformatted printing.
-2015-11-07: v0.3.1, reformatted fields to modify field 5. 
-2015-11-07: v0.3.0, fixed for new field (field 5, Units).
-2015-11-07: v0.2.1, reformatted top section.
-2015-10-11: v0.2.0, adds support for specific content areas.
-2015-10-08: v0.1.0, initial release.
-
 This code takes in a downloaded class schedule from UCONN's Student Administration System,
 and determines which classes are in what content area as defined in the Undergraduate Catalog.
 
