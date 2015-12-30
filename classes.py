@@ -67,6 +67,8 @@ def formatFields(c):
             row[5] = row[5].replace('.00', '')
             row[5] = row[5].replace('="', '')
             row[5] = row[5].replace('"', '')
+            row[5] = row[5].replace(' ', '')
+        row[16] = row[16].replace('\n\r', '')
     return classes
 
 def printClasses(c, ca = 0, f = 0):
@@ -99,7 +101,7 @@ def printClasses(c, ca = 0, f = 0):
         # Map the data within the row to certain identifiers.
         mapping = {"class": row[0], "subject": row[1], "catalog": row[2], "ca": row[18], "section": row[3], 
                    "units": row[5], "description": row[8], "autoenroll": row[10], "open": row[14], "enrolled": row[12],
-                   "max": row[11], "wait": row[15], "instructor": row[16].replace('\n\r', ''), "hours": row[17]}
+                   "max": row[11], "wait": row[15], "instructor": row[16], "hours": row[17]}
         # Show either only full classes or excluding full classes.
         if f != 0:
             # Show only full classes.
