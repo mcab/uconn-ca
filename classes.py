@@ -32,32 +32,23 @@ Field 18: Content Area          - Which content area class is       - 2 alphanum
 
 import argparse
 from lxml.html import parse
+from caList import *
 
-def appendContentArea(c, ca):
+def appendContentArea(c):
     """
-    This function takes in two arguments:
+    This function takes in one argument:
          c: class listings, as a list
-        ca: content areas, as a list
 
-    This takes the subject and catalog number per class listing,
-    and searches for it by every row in the content areas listing.
-
-    There is possible mischecking based off of this method due to checking
-    only the first four characters and not if it is a Q/W course.
+    This takes the subject and catalog number per class listing
+    and appends the content area to the class listing.
     """
     classes = c
-    contentArea = ca
     for r in range(1, len(classes)):
-        subject = classes[r][1]
-        catalogNumber = classes[r][2]
-        contentAreaFound = False
-        for i in range(0, len(contentArea)):
-            if subject in contentArea[i][1] and catalogNumber[0:4] in contentArea[i][1]:
-                classes[r].append(contentArea[i][0])
-                contentAreaFound = True
-                break
-        if contentAreaFound == False:
-            classes[r].append('N/A')
+        key = classes[r][1] + ' ' + classes[r][2]
+        if key in caDict:
+            classes[r].append(caDict[key])
+        else:
+            classes[r].append('-')
     return classes
 
 def formatFields(c):
@@ -148,21 +139,6 @@ def printClasses(c, ca = 0, f = 0):
                         if str(ca) == row[18][0:1]:
                             print formattedString % mapping
 
-def processContentArea(ca, d):
-    """
-    This function takes in two arguments:
-        ca: content areas, as a list
-         d: delimiter, as a string
-
-    This function splits up the content area listings by whatever
-    delimiter is used, stores it as a list, and returns the list.
-    """
-    f = open(ca, 'r')
-    data = list()
-    for line in f.readlines():
-        data.append(line.split(d))
-    return data
-
 def validateArgs(a):
     """
     This function takes in one argument:
@@ -181,7 +157,6 @@ def validateArgs(a):
 def main():
     parser = argparse.ArgumentParser(description = 'This script determines which classes are in what content areas based off of the Undergraduate Catalog of 2015-2016.')
     parser.add_argument('-c', '--classes', type = str, help = 'Classes file from the Student Administration service.', required = True)
-    parser.add_argument('-ca', '--contentarea', type = str, help = 'Content area file from the Undergraduate Catalog.', required = True)
     parser.add_argument('-s', '--show', type = int, default = 0, help = 'Content area number from the Undergraduate Catalog. 0 shows all classes, 1-4 shows specific content areas, 5 shows all classes with a content area.', required = False)
     parser.add_argument('-f', '--full', type = int, default = 0, help = 'Shows what classes are full. 0 shows all classes, 1 shows only full classes, 2 excludes full classes.', required = False)
     
@@ -196,8 +171,7 @@ def main():
             classes.append([c.text for c in row.getchildren()])
     
         classes = formatFields(classes)
-        contentAreas = processContentArea(args.contentarea, ' ^ ')
-        classes = appendContentArea(classes, contentAreas)
+        classes = appendContentArea(classes)
         printClasses(classes, args.show, args.full)
     except IOError, Argument:
         print 'The file(s) entered cannot be accessed:', Argument
