@@ -123,7 +123,7 @@ def printClasses(c, ca = 0, f = 0):
                     if ca == 0:
                         print formattedString % mapping
                     else:
-                        if not 'N/A' in row[18]:
+                        if not '-' in row[18]:
                             if ca == 5: 
                                 print formattedString % mapping
                             else:
