@@ -108,11 +108,11 @@ def printClasses(c, ca = 0, f = 0):
                     if ca == 0:
                         print formattedString % mapping
                     else:
-                        if not 'N/A' in row[18]:
+                        if not '-' in row[18]:
                             if ca == 5: 
                                 print formattedString % mapping
                             else:
-                                if str(ca) == row[18][0:1]:
+                                if str(ca) in row[18]:
                                     print formattedString % mapping
             # Exclude full classes.
             elif f == 2:
@@ -125,18 +125,18 @@ def printClasses(c, ca = 0, f = 0):
                             if ca == 5: 
                                 print formattedString % mapping
                             else:
-                                if str(ca) == row[18][0:1]:
+                                if str(ca) in row[18]:
                                     print formattedString % mapping
         # Show all classes, regardless.
         else:
             if ca == 0:
                 print formattedString % mapping
             else:
-                if not 'N/A' in row[18]:
+                if not '-' in row[18]:
                     if ca == 5:
                         print formattedString % mapping
                     else:
-                        if str(ca) == row[18][0:1]:
+                        if str(ca) in row[18]:
                             print formattedString % mapping
 
 def validateArgs(a):
