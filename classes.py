@@ -62,7 +62,7 @@ def formatFields(c):
     """
     classes = c
     for row in classes[1:]:
-        row[2] = row[2][2:len(row[2]) - 1]
+        # row[2] = row[2][2:len(row[2]) - 1]
         if row[5] != None:
             row[5] = row[5].replace('.00', '')
             row[5] = row[5].replace('="', '')
@@ -92,9 +92,9 @@ def printClasses(c, ca = 0, f = 0):
     a certain content area. If it is false, it prints out the class listing.
     """
     classes = c
-    formattedString = '%(class)-5s %(subject)-4s %(catalog)-7s %(ca)-4s %(section)-7s %(units)-6s %(description)-30s %(autoenroll)-11s %(open)4s/%(enrolled)8s/%(max)3s/%(wait)4s %(instructor)-76s %(hours)s'
+    formattedString = '%(class)-5s %(subject)-4s %(catalog)-7s %(ca)-4s %(section)-7s %(units)-6s %(description)-30s %(autoenroll)-11s %(open)4s/%(enrolled)8s/%(max)3s/%(wait)4s %(instructor)-63s %(hours)s'
 
-    print '%s %s %s %-4s %-7s %-6s %-30s %-11s %s %-76s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', 'Units', \
+    print '%s %s %s %-4s %-7s %-6s %-30s %-11s %s %-63s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', 'Units', \
         'Description', 'Auto-Enroll', 'Open/Enrolled/Max/Wait', 'Instructor', 'Hours')
     
     for row in classes[1:]:
@@ -161,7 +161,7 @@ def main():
     parser.add_argument('-c', '--classes', type = str, help = 'Classes file from the Student Administration service.', required = True)
     parser.add_argument('-s', '--show', type = int, default = 0, help = 'Content area number from the Undergraduate Catalog. 0 shows all classes, 1-4 shows specific content areas, 5 shows all classes with a content area.', required = False)
     parser.add_argument('-f', '--full', type = int, default = 0, help = 'Shows what classes are full. 0 shows all classes, 1 shows only full classes, 2 excludes full classes.', required = False)
-    
+
     args = parser.parse_args()
     validateArgs(args)
 
@@ -171,7 +171,7 @@ def main():
         classes = list()
         for row in rows:
             classes.append([c.text for c in row.getchildren()])
-    
+
         classes = formatFields(classes)
         classes = appendContentArea(classes)
         printClasses(classes, args.show, args.full)
