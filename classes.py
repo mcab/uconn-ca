@@ -92,9 +92,9 @@ def printClasses(c, ca = 0, f = 0):
     a certain content area. If it is false, it prints out the class listing.
     """
     classes = c
-    formattedString = '%(class)-5s %(subject)-4s %(catalog)-7s %(ca)-4s %(section)-7s %(units)-6s %(description)-30s %(autoenroll)-11s %(open)4s/%(enrolled)8s/%(max)3s/%(wait)4s %(instructor)-63s %(hours)s'
+    formattedString = '%(class)-5s %(subject)-4s %(catalog)-5s %(ca)-4s %(section)-7s %(units)-5s %(description)-30s %(autoenroll)-11s %(open)4s/%(enrolled)8s/%(max)3s/%(wait)4s %(instructor)-63s %(hours)s'
 
-    print '%s %s %s %-4s %-7s %-6s %-30s %-11s %s %-63s %s' % ('Class', 'Subj', 'Catalog', 'CA', 'Section', 'Units', \
+    print '%s %-10s %-4s %-7s %-5s %-30s %-11s %s %-63s %s' % ('Class', 'Course ID', 'CA', 'Section', 'Units', \
         'Description', 'Auto-Enroll', 'Open/Enrolled/Max/Wait', 'Instructor', 'Hours')
     
     for row in classes[1:]:
